@@ -1,0 +1,19 @@
+{
+  "title": "Category set",
+  "type": "array",
+  "categories": {
+    "title": "Category",
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "The unique identifier for the category",
+        "type": "integer"
+      },
+      "name": {
+        "description": "The name of the category",
+        "type": "string"
+      }
+    },
+    "required": ["id", "name"]
+  }
+}

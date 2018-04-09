@@ -1,0 +1,8 @@
+{
+  "title": "Transaction set",
+  "type": "array",
+  "transactions": {
+    "type": "object",
+    "$ref": "file:src/test/java/nl/utwente/ing/schemas/transactions/transaction.json"
+  }
+}

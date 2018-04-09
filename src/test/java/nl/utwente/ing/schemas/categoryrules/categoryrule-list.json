@@ -1,0 +1,41 @@
+{
+  "title": "CategoryRules set",
+  "type": "array",
+  "categories": {
+    "title": "CategoryRule",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "description": {
+        "type": "string"
+      },
+      "iBAN": {
+        "type": "string"
+      },
+      "type": {
+        "description": "The type of transaction for this rule (either deposit or withdrawal)",
+        "type": "string",
+        "enum": ["deposit", "withdrawal"]
+      },
+      "category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for the category",
+            "type": "integer"
+          },
+          "name": {
+            "description": "The name of the category",
+            "type": "string"
+          }
+        }
+      },
+      "applyOnHistory": {
+        "type": "boolean"
+      }
+    },
+    "required": ["id", "description", "iBAN", "type", "category", "applyOnHistory"]
+  }
+}

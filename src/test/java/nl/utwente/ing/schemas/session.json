@@ -1,0 +1,11 @@
+{
+  "title": "Session",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "The id for the current session",
+      "type": "string"
+    }
+  },
+  "required": ["id"]
+}
