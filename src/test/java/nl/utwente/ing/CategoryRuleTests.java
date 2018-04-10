@@ -520,7 +520,7 @@ public class CategoryRuleTests {
                 .getInt("id");
 
         // Assure the transaction category was set according to the new rule
-        String categoryName = given()
+        int categoryId = given()
                 .header("X-session-ID", sessionId)
                 .get(String.format("api/v1/transactions/%d", testTransactionId))
                 .then()
@@ -530,9 +530,9 @@ public class CategoryRuleTests {
                 .response()
                 .getBody()
                 .jsonPath()
-                .getString("category.name");
+                .getInt("category_id");
 
-        assertEquals("groceries", categoryName);
+        assertEquals(testCategoryRuleId.intValue(), categoryId);
     }
 
     /**
@@ -580,7 +580,7 @@ public class CategoryRuleTests {
                 .getInt("id");
 
         // Assure the transaction category was set according to the new rule
-        String categoryName = given()
+        int categoryId = given()
                 .header("X-session-ID", sessionId)
                 .get(String.format("api/v1/transactions/%d", testTransactionId))
                 .then()
@@ -590,9 +590,9 @@ public class CategoryRuleTests {
                 .response()
                 .getBody()
                 .jsonPath()
-                .getString("category.name");
+                .getInt("category_id");
 
-        assertEquals("groceries", categoryName);
+        assertEquals(testCategoryRuleId.intValue(), categoryId);
     }
 
     /**
@@ -638,7 +638,7 @@ public class CategoryRuleTests {
                 .getInt("id");
 
         // Assure the transaction category was not set according to the new rule
-        String categoryName = given()
+        String categoryId = given()
                 .header("X-session-ID", sessionId)
                 .get(String.format("api/v1/transactions/%d", testTransactionId))
                 .then()
@@ -648,9 +648,9 @@ public class CategoryRuleTests {
                 .response()
                 .getBody()
                 .jsonPath()
-                .getJsonObject("category");
+                .getJsonObject("category_id");
 
-        assertNull(categoryName);
+        assertNull(categoryId);
     }
 
     /**
@@ -698,7 +698,7 @@ public class CategoryRuleTests {
                 .getInt("id");
 
         // Assure the transaction category was set according to the new rule
-        String categoryName = given()
+        int categoryId = given()
                 .header("X-session-ID", sessionId)
                 .get(String.format("api/v1/transactions/%d", testTransactionId))
                 .then()
@@ -708,8 +708,8 @@ public class CategoryRuleTests {
                 .response()
                 .getBody()
                 .jsonPath()
-                .getString("category.name");
+                .getInt("category_id");
 
-        assertEquals("groceries", categoryName);
+        assertEquals(testCategoryRuleId.intValue(), categoryId);
     }
 }
