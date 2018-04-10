@@ -19,23 +19,13 @@
         "type": "string",
         "enum": ["deposit", "withdrawal"]
       },
-      "category": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "description": "The unique identifier for the category",
-            "type": "integer"
-          },
-          "name": {
-            "description": "The name of the category",
-            "type": "string"
-          }
-        }
+      "category_id": {
+        "type": "integer"
       },
       "applyOnHistory": {
         "type": "boolean"
       }
     },
-    "required": ["id", "description", "iBAN", "type", "category", "applyOnHistory"]
+    "required": ["id", "description", "iBAN", "type", "category_id", "applyOnHistory"]
   }
 }
