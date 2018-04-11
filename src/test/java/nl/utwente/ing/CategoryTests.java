@@ -321,7 +321,7 @@ public class CategoryTests {
 
         given()
                 .header("X-session-ID", sessionId)
-                .body("{\"invalid\"}")
+                .body("{\"invalid\": true}")
                 .put(String.format("api/v1/categories/%d", testCategoryId))
                 .then()
                 .assertThat()

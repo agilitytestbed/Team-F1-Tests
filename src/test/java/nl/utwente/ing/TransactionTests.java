@@ -47,13 +47,15 @@ public class TransactionTests {
     private static final URI TRANSACTION_SCHEMA_PATH = Paths.get("src/test/java/nl/utwente/ing/schemas" +
                     "/transactions/transaction.json").toAbsolutePath().toUri();
 
-    public static String sessionId;
+    static String sessionId;
 
     private static Integer testTransactionId;
+    private static Integer testDescriptionTransactionId;
     private static Integer clutterTransactionId;
 
-    public static Integer testCategoryId;
+    static Integer testCategoryId;
     private static final String TEST_CATEGORY_NAME = "TransactionTests Test Category";
+    private static final String TEST_DESCRIPTION_NAME = "TransactionTests Test Description";
 
     private static final String TEST_TRANSACTION_INPUT_FORMAT =
                     "{" +
@@ -124,6 +126,12 @@ public class TransactionTests {
             given()
                     .header("X-session-ID", sessionId)
                     .delete(String.format("api/v1/transactions/%d", clutterTransactionId));
+        }
+
+        if (testDescriptionTransactionId != null) {
+            given()
+                    .header("X-session-ID", sessionId)
+                    .delete(String.format("api/v1/transactions/%d", testDescriptionTransactionId));
         }
     }
 
@@ -312,6 +320,34 @@ public class TransactionTests {
     }
 
     /**
+     * Performs a GET request on the transactions/{transactionId} endpoint on a Transaction with description.
+     *
+     * This test uses a valid session ID to test whether a previously created transaction can be fetched and is
+     * formatted according to the specification.
+     */
+    @Test
+    public void validSessionByIdDescriptionGetTest() {
+        // Use the /transactions POST test to create the test category.
+        validSessionValidDescriptionTransactionPostTest();
+
+        String transactionDescription = given()
+                .header("X-session-ID", sessionId)
+                .get(String.format("api/v1/transactions/%d", testDescriptionTransactionId))
+                .then()
+                .assertThat()
+                .body(matchesJsonSchema(TRANSACTION_SCHEMA_PATH))
+                .contentType(ContentType.JSON)
+                .statusCode(200)
+                .extract()
+                .response()
+                .getBody()
+                .jsonPath()
+                .getString("description");
+
+        assertEquals(TEST_DESCRIPTION_NAME, transactionDescription);
+    }
+
+    /**
      * Performs a GET request on the transactions/{transactionId} endpoint.
      *
      * This test uses a valid session ID with an invalid transaction ID to test whether the server responds with the
@@ -374,6 +410,37 @@ public class TransactionTests {
         testTransactionId = given()
                 .header("X-session-ID", sessionId)
                 .body(String.format(TEST_TRANSACTION_INPUT_FORMAT, testCategoryId))
+                .post("api/v1/transactions")
+                .then()
+                .assertThat()
+                .statusCode(201)
+                .extract()
+                .response()
+                .getBody()
+                .jsonPath()
+                .getInt("id");
+    }
+
+    /**
+     * Performs a POST request on the transactions endpoint.
+     *
+     * This test uses a valid session ID and description to test whether it is possible to create a new transaction.
+     */
+    @Test
+    public void validSessionValidDescriptionTransactionPostTest() {
+        testDescriptionTransactionId = given()
+                .header("X-session-ID", sessionId)
+                .body(String.format("{" +
+                        "\"date\": \"1889-04-20T19:45:04.030Z\", " +
+                        "\"amount\": 213.12, " +
+                        "\"description\": \"" + TEST_DESCRIPTION_NAME + "\", "+
+                        "\"externalIBAN\": \"string\", " +
+                        "\"type\": \"deposit\", " +
+                        "\"category\": {" +
+                        "    \"id\": %d," +
+                        "    \"name\": \"" + TEST_CATEGORY_NAME + "\""+
+                        "  }" +
+                        "}", testCategoryId))
                 .post("api/v1/transactions")
                 .then()
                 .assertThat()

@@ -39,5 +39,5 @@
       "type": "string"
     }
   },
-  "required": ["id", "date", "amount", "externalIBAN", "type", "category", "description"]
+  "required": ["id", "date", "amount", "externalIBAN", "type", "category"]
 }
