@@ -24,9 +24,7 @@
  */
 package nl.utwente.ing;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,62 +39,79 @@ public class CategoryRuleTests {
     private static final Path CATEGORYRULE_SCHEMA_PATH = Paths.get("src/test/java/nl/utwente/ing/schemas/categoryrules/categoryrule.json");
     private static final Path CATEGORYRULE_LIST_SCHEMA_PATH = Paths.get("src/test/java/nl/utwente/ing/schemas/categoryrules/categoryrule-list.json");
     private static final int INVALID_CATEGORYRULE_ID = -26_07_1581;
-    private static final String TEST_CATEGORYRULE = "{" +
+    private static final String TEST_CATEGORYRULE_FORMAT = "{" +
             "\"description\":\"University of Twente\"," +
             "\"iBAN\":\"NL39RABO0300065264\"," +
             "\"type\": \"deposit\"," +
-            "\"category\": { " +
-                "\"id\": 25, " +
-                "\"name\": \"groceries\" " +
-            "}," +
+            "\"category_id\": %d," +
+            "\"applyOnHistory\": %b " +
+            "}";
+    private static final String TEST_CATEGORYRULE_BLANK_FORMAT = "{" +
+            "\"description\":\"\"," +
+            "\"iBAN\":\"\"," +
+            "\"type\": \"\"," +
+            "\"category_id\": %d," +
             "\"applyOnHistory\": false " +
             "}";
-    private static final String TEST_TRANSACTION =
-            "{" +
+    private static final String TEST_TRANSACTION = "{" +
                     "\"date\": \"1889-04-20T19:45:04.030Z\", " +
                     "\"amount\": 213.12, " +
                     "\"externalIBAN\": \"NL39RABO0300065264\", " +
                     "\"type\": \"deposit\", " +
-                    "\"description\":\"University of Twente\"," +
+                    "\"description\":\"University of Twente\"" +
                     "}";
+    private static final String TEST_TRANSACTION_DIFFERENT = "{" +
+            "\"date\": \"1889-04-20T19:45:04.030Z\", " +
+            "\"amount\": 213.12, " +
+            "\"externalIBAN\": \"NL39RABO0300065264\", " +
+            "\"type\": \"deposit\", " +
+            "\"description\":\"University of Enschede\"" +
+            "}";
 
     private static Integer testTransactionId;
+    private static Integer testCategoryId;
     private static Integer testCategoryRuleId;
     private static String sessionId;
 
     /**
-     * Makes sure all tests share the same session ID by setting sessionId if it does not exist yet.
+     * Sets up the fields which are shared between all tests ensuring that all tests can depend on these
+     * fields existing and being set properly.
      */
-    @Before
-    public void getTestSession() {
-        if (sessionId == null) {
-            sessionId = Util.getSessionID();
-        }
+    @BeforeClass
+    public static void setup() {
+        sessionId = Util.getSessionID();
+
+        testCategoryId = given()
+                .header("X-session-ID", sessionId)
+                .body("{\"name\": \"Groceries\"}")
+                .post("api/v1/categories")
+                .then()
+                .assertThat()
+                .statusCode(201)
+                .extract()
+                .response()
+                .getBody()
+                .jsonPath()
+                .getInt("id");
     }
 
     /**
      * Deletes the test data used for testing before and after running every test.
      * This avoids duplicate entries and leftover entries in the database after running tests.
      */
-    @Before
-    @After
-    public void deleteTestData() {
-        // Make sure that the session exists in case deleteTestCategoryRule() is called before getTestSession().
-        if (sessionId == null) {
-            getTestSession();
-        }
+    @AfterClass
+    public static void deleteTestData() {
+        given()
+                .header("X-session-ID", sessionId)
+                .delete(String.format("api/v1/categories/%d", testCategoryId));
 
-        if (testCategoryRuleId != null) {
-            given()
-                    .header("X-session-ID", sessionId)
-                    .delete(String.format("api/v1/categoryRules/%d", testCategoryRuleId));
-        }
+        given()
+                .header("X-session-ID", sessionId)
+                .delete(String.format("api/v1/categoryRules/%d", testCategoryRuleId));
 
-        if (testTransactionId != null) {
-            given()
-                    .header("X-session-ID", sessionId)
-                    .delete(String.format("api/v1/transactions/%d", testTransactionId));
-        }
+        given()
+                .header("X-session-ID", sessionId)
+                .delete(String.format("api/v1/transactions/%d", testTransactionId));
     }
 
     /*
@@ -130,7 +145,6 @@ public class CategoryRuleTests {
                 .get("api/v1/categoryRules")
                 .then()
                 .assertThat()
-                .body(matchesJsonSchema(CATEGORYRULE_LIST_SCHEMA_PATH.toAbsolutePath().toUri()))
                 .statusCode(401);
     }
 
@@ -150,7 +164,7 @@ public class CategoryRuleTests {
                 .then()
                 .assertThat()
                 .body(matchesJsonSchema(CATEGORYRULE_LIST_SCHEMA_PATH.toAbsolutePath().toUri()))
-                .statusCode(401);
+                .statusCode(200);
     }
 
     /**
@@ -167,7 +181,6 @@ public class CategoryRuleTests {
                 .get("api/v1/categoryRules")
                 .then()
                 .assertThat()
-                .body(matchesJsonSchema(CATEGORYRULE_LIST_SCHEMA_PATH.toAbsolutePath().toUri()))
                 .statusCode(401);
     }
 
@@ -185,7 +198,7 @@ public class CategoryRuleTests {
     public void categoryRulePostTest() {
         testCategoryRuleId = given()
                 .header("X-session-ID", sessionId)
-                .body(TEST_CATEGORYRULE)
+                .body(String.format(TEST_CATEGORYRULE_FORMAT, testCategoryId, false))
                 .post("api/v1/categoryRules")
                 .then()
                 .assertThat()
@@ -207,7 +220,7 @@ public class CategoryRuleTests {
     @Test
     public void invalidSessionCategoryRulePostTest() {
         given()
-                .body(TEST_CATEGORYRULE)
+                .body(String.format(TEST_CATEGORYRULE_FORMAT, testCategoryId, false))
                 .post("api/v1/categoryRules")
                 .then()
                 .assertThat()
@@ -376,16 +389,13 @@ public class CategoryRuleTests {
 
         given()
                 .header("X-session-ID", sessionId)
-                .body("{" +
+                .body(String.format("{" +
                         "\"description\":\"CATEGORY_PUT_TEST\"," +
                         "\"iBAN\":\"NL39RABO0300065264\"," +
                         "\"type\": \"deposit\"," +
-                        "\"category\": { " +
-                        "\"id\": 25, " +
-                        "\"name\": \"groceries\" " +
-                        "}," +
+                        "\"category_id\": %d," +
                         "\"applyOnHistory\": false " +
-                        "}")
+                        "}", testCategoryId))
                 .put(String.format("api/v1/categoryRules/%d", testCategoryRuleId))
                 .then()
                 .assertThat()
@@ -419,16 +429,7 @@ public class CategoryRuleTests {
         categoryRulePostTest();
 
         given()
-                .body("{" +
-                        "\"description\":\"CATEGORY_PUT_TEST\"," +
-                        "\"iBAN\":\"NL39RABO0300065264\"," +
-                        "\"type\": \"deposit\"," +
-                        "\"category\": { " +
-                        "\"id\": 25, " +
-                        "\"name\": \"groceries\" " +
-                        "}," +
-                        "\"applyOnHistory\": false " +
-                        "}")
+                .body(String.format(TEST_CATEGORYRULE_FORMAT, testCategoryId, false))
                 .put(String.format("api/v1/categoryRules/%d", testCategoryRuleId))
                 .then()
                 .assertThat()
@@ -445,16 +446,7 @@ public class CategoryRuleTests {
     public void validSessionCategoryRulesByInvalidIdPutTest() {
         given()
                 .header("X-session-ID", sessionId)
-                .body("{" +
-                        "\"description\":\"CATEGORY_PUT_TEST\"," +
-                        "\"iBAN\":\"NL39RABO0300065264\"," +
-                        "\"type\": \"deposit\"," +
-                        "\"category\": { " +
-                        "\"id\": 25, " +
-                        "\"name\": \"groceries\" " +
-                        "}," +
-                        "\"applyOnHistory\": false " +
-                        "}")
+                .body(String.format(TEST_CATEGORYRULE_FORMAT, testCategoryId, false))
                 .put(String.format("api/v1/categoryRules/%d", INVALID_CATEGORYRULE_ID))
                 .then()
                 .assertThat()
@@ -493,7 +485,7 @@ public class CategoryRuleTests {
         // Create a new category rule
         testCategoryRuleId = given()
                 .header("X-session-ID", sessionId)
-                .body(TEST_CATEGORYRULE)
+                .body(String.format(TEST_CATEGORYRULE_FORMAT, testCategoryId, false))
                 .post("api/v1/categoryRules")
                 .then()
                 .assertThat()
@@ -530,9 +522,9 @@ public class CategoryRuleTests {
                 .response()
                 .getBody()
                 .jsonPath()
-                .getInt("category_id");
+                .getInt("category.id");
 
-        assertEquals(testCategoryRuleId.intValue(), categoryId);
+        assertEquals(testCategoryId.intValue(), categoryId);
     }
 
     /**
@@ -558,16 +550,7 @@ public class CategoryRuleTests {
         // Create a new category rule with applyOnHistory set to true, matching the transaction created earlier
         testCategoryRuleId = given()
                 .header("X-session-ID", sessionId)
-                .body("{" +
-                        "\"description\":\"University of Twente\"," +
-                        "\"iBAN\":\"NL39RABO0300065264\"," +
-                        "\"type\": \"deposit\"," +
-                        "\"category\": { " +
-                        "\"id\": 25, " +
-                        "\"name\": \"groceries\" " +
-                        "}," +
-                        "\"applyOnHistory\": true " +
-                        "}")
+                .body(String.format(TEST_CATEGORYRULE_FORMAT, testCategoryId, true))
                 .post("api/v1/categoryRules")
                 .then()
                 .assertThat()
@@ -590,9 +573,9 @@ public class CategoryRuleTests {
                 .response()
                 .getBody()
                 .jsonPath()
-                .getInt("category_id");
+                .getInt("category.id");
 
-        assertEquals(testCategoryRuleId.intValue(), categoryId);
+        assertEquals(testCategoryId.intValue(), categoryId);
     }
 
     /**
@@ -604,7 +587,7 @@ public class CategoryRuleTests {
         // Create a new category rule
         testCategoryRuleId = given()
                 .header("X-session-ID", sessionId)
-                .body(TEST_CATEGORYRULE)
+                .body(String.format(TEST_CATEGORYRULE_FORMAT, testCategoryId, false))
                 .post("api/v1/categoryRules")
                 .then()
                 .assertThat()
@@ -620,13 +603,7 @@ public class CategoryRuleTests {
         // Note: The description is different (NOT University of Twente).
         testTransactionId = given()
                 .header("X-session-ID", sessionId)
-                .body("{" +
-                        "\"date\": \"1889-04-20T19:45:04.030Z\", " +
-                        "\"amount\": 213.12, " +
-                        "\"externalIBAN\": \"NL39RABO0300065264\", " +
-                        "\"type\": \"deposit\", " +
-                        "\"description\":\"University of Enschede\"," +
-                        "}")
+                .body(TEST_TRANSACTION_DIFFERENT)
                 .post("api/v1/transactions")
                 .then()
                 .assertThat()
@@ -662,16 +639,7 @@ public class CategoryRuleTests {
         // Create a new category rule with all fields left blank, causing all transactions to match it.
         testCategoryRuleId = given()
                 .header("X-session-ID", sessionId)
-                .body("{" +
-                        "\"description\":\"\"," +
-                        "\"iBAN\":\"\"," +
-                        "\"type\": \"\"," +
-                        "\"category\": { " +
-                        "\"id\": 25, " +
-                        "\"name\": \"groceries\" " +
-                        "}," +
-                        "\"applyOnHistory\": false " +
-                        "}")
+                .body(String.format(TEST_CATEGORYRULE_BLANK_FORMAT, testCategoryId))
                 .post("api/v1/categoryRules")
                 .then()
                 .assertThat()
@@ -708,8 +676,8 @@ public class CategoryRuleTests {
                 .response()
                 .getBody()
                 .jsonPath()
-                .getInt("category_id");
+                .getInt("category.id");
 
-        assertEquals(testCategoryRuleId.intValue(), categoryId);
+        assertEquals(testCategoryId.intValue(), categoryId);
     }
 }

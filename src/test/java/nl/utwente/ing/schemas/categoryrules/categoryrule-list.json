@@ -17,7 +17,7 @@
       "type": {
         "description": "The type of transaction for this rule (either deposit or withdrawal)",
         "type": "string",
-        "enum": ["deposit", "withdrawal"]
+        "enum": ["deposit", "withdrawal", ""]
       },
       "category_id": {
         "type": "integer"
