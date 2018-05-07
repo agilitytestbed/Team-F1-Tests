@@ -29,7 +29,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({SessionTests.class, CategoryTests.class, TransactionTests.class, CategoryRuleTests.class})
+@Suite.SuiteClasses({SessionTests.class, CategoryTests.class, TransactionTests.class, CategoryRuleTests.class,
+        BalanceHistoryTests.class})
 public class TestSuite {
 
     @AfterClass
