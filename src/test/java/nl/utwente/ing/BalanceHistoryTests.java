@@ -161,13 +161,13 @@ public class BalanceHistoryTests {
         Calendar calendar = Calendar.getInstance();
         // We create a batch of transactions, each one month apart. The chronological order is the reverse of
         // the order in which they are created here.
-        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 300, "withdraw");// 300
+        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 300, "withdrawal");// 300
         calendar.add(Calendar.MONTH, -1);
         createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 400, "deposit"); // 600
         calendar.add(Calendar.MONTH, -1);
-        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 200, "withdraw");// 200
+        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 200, "withdrawal");// 200
         calendar.add(Calendar.MONTH, -1);
-        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 100, "withdraw");// 400
+        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 100, "withdrawal");// 400
         calendar.add(Calendar.MONTH, -1);
         createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 500, "deposit"); // 500
 
