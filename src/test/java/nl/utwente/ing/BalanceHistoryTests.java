@@ -143,11 +143,11 @@ public class BalanceHistoryTests {
                 .getBody()
                 .jsonPath();
 
-        assertEquals(500, path.getInt("[0].open"));
-        assertEquals(700, path.getInt("[0].close"));
-        assertEquals(800, path.getInt("[0].high"));
-        assertEquals(500, path.getInt("[0].low"));
-        assertEquals(400, path.getInt("[0].volume"));
+        assertEquals(5.00, path.getDouble("[0].open"), 0.01);
+        assertEquals(7.00, path.getDouble("[0].close"), 0.01);
+        assertEquals(8.00, path.getDouble("[0].high"), 0.01);
+        assertEquals(5.00, path.getDouble("[0].low"), 0.01);
+        assertEquals(4.00, path.getDouble("[0].volume"), 0.01);
     }
 
     /**
@@ -184,12 +184,12 @@ public class BalanceHistoryTests {
                 .jsonPath();
 
         // Pick some arbitrary elements from the result and make sure they are correct.
-        assertEquals(600, path.getInt("[0].open"));
-        assertEquals(300, path.getInt("[0].close"));
-        assertEquals(600, path.getInt("[1].high"));
-        assertEquals(200, path.getInt("[1].low"));
-        assertEquals(200, path.getInt("[2].volume"));
-        assertEquals(100, path.getInt("[3].volume"));
+        assertEquals(6.00, path.getDouble("[0].open"), 0.01);
+        assertEquals(3.00, path.getDouble("[0].close"), 0.01);
+        assertEquals(6.00, path.getDouble("[1].high"), 0.01);
+        assertEquals(2.00, path.getDouble("[1].low"), 0.01);
+        assertEquals(2.00, path.getDouble("[2].volume"), 0.01);
+        assertEquals(1.00, path.getDouble("[3].volume"), 0.01);
     }
 
     // TODO: Different interval timings? day/week/month ..
