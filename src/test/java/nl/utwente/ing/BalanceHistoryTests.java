@@ -205,7 +205,45 @@ public class BalanceHistoryTests {
         assertEquals(1.00, path.getDouble("[3].volume"), 0.01);
     }
 
-    // TODO: Different interval timings? day/week/month ..
+    /**
+     * Checks whether intervals are created correctly after inserting multiple transactions into one interval slot.
+     */
+    @Test
+    public void differentIntervalsBalanceHistoryGetTest() {
+        // A new session is used so that transactions added by other tests do not influence this test.
+        String session = Util.getSessionID();
+
+        Calendar calendar = Calendar.getInstance();
+        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 100, "withdrawal"); // 1000
+        calendar.add(Calendar.WEEK_OF_YEAR, -1);
+        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 300, "withdrawal"); // 1100
+        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 500, "deposit"); // 1400
+        calendar.add(Calendar.MONTH, -1);
+        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 100, "withdrawal"); // 900
+        calendar.add(Calendar.MONTH, -2);
+        createTransaction(session, DATE_FORMAT.format(calendar.getTime()), 1000, "deposit"); // 1000
+
+
+        JsonPath path = given()
+                .header("X-session-ID", session)
+                .get("api/v1/balance/history?intervals=5")
+                .then()
+                .assertThat()
+                .body(matchesJsonSchema(BALANCE_HISTORY_SCHEMA_PATH.toAbsolutePath().toUri()))
+                .statusCode(200)
+                .extract()
+                .response()
+                .getBody()
+                .jsonPath();
+
+        // Pick some arbitrary elements from the result and make sure they are correct.
+        assertEquals(9.00, path.getDouble("[0].open"), 0.01);
+        assertEquals(10.0, path.getDouble("[0].close"), 0.01);
+        assertEquals(10.0, path.getDouble("[1].high"), 0.01);
+        assertEquals(9.0, path.getDouble("[1].low"), 0.01);
+        assertEquals(0.0, path.getDouble("[2].volume"), 0.01);
+        assertEquals(10.0, path.getDouble("[3].volume"), 0.01);
+    }
 
     /**
      * Helper function to create a Transaction.
