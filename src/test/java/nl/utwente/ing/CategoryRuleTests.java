@@ -96,7 +96,7 @@ public class CategoryRuleTests {
     }
 
     /**
-     * Deletes the test data used for testing before and after running every test.
+     * Deletes the test data used for testing after running all tests.
      * This avoids duplicate entries and leftover entries in the database after running tests.
      */
     @AfterClass

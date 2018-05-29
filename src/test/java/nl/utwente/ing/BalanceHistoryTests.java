@@ -25,6 +25,7 @@
 package nl.utwente.ing;
 
 import io.restassured.path.json.JsonPath;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -53,7 +54,6 @@ public class BalanceHistoryTests {
 
     private static String sessionId;
     // A list containing all transactions used for testing, which should be deleted after running all tests.
-    // TODO: Delete all transactions in testTransactions.
     private static List<TestTransaction> testTransactions = new ArrayList<>();
 
     /**
@@ -63,6 +63,19 @@ public class BalanceHistoryTests {
     @BeforeClass
     public static void setup() {
         sessionId = Util.getSessionID();
+    }
+
+    /**
+     * Deletes the test data used for testing after running all tests.
+     * This avoids duplicate entries and leftover entries in the database after running tests.
+     */
+    @AfterClass
+    public static void deleteTestData() {
+        for (TestTransaction transaction : testTransactions) {
+            given()
+                    .header("X-session-ID", transaction.getSessionId())
+                    .delete(String.format("api/v1/transactions/%d", transaction.getTransactionId()));
+        }
     }
 
     /**
