@@ -19,8 +19,11 @@
       },
       "volume": {
         "type": "integer"
+      },
+      "timestamp": {
+        "type": "integer"
       }
     },
-    "required": ["open", "close", "high", "low", "volume"]
+    "required": ["open", "close", "high", "low", "volume", "timestamp"]
   }
 }

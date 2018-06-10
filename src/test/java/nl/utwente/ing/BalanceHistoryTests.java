@@ -39,6 +39,7 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BalanceHistoryTests {
 
@@ -161,6 +162,8 @@ public class BalanceHistoryTests {
         assertEquals(8.00, path.getDouble("[0].high"), 0.01);
         assertEquals(5.00, path.getDouble("[0].low"), 0.01);
         assertEquals(4.00, path.getDouble("[0].volume"), 0.01);
+        // Check whether a timestamp is present in the output.
+        assertTrue(path.getInt("[0].timestamp") > 0);
     }
 
     /**
@@ -203,6 +206,8 @@ public class BalanceHistoryTests {
         assertEquals(2.00, path.getDouble("[1].low"), 0.01);
         assertEquals(2.00, path.getDouble("[2].volume"), 0.01);
         assertEquals(1.00, path.getDouble("[3].volume"), 0.01);
+        // Check whether a timestamp is present in the output.
+        assertTrue(path.getInt("[0].timestamp") > 0);
     }
 
     /**
@@ -243,6 +248,8 @@ public class BalanceHistoryTests {
         assertEquals(9.0, path.getDouble("[1].low"), 0.01);
         assertEquals(0.0, path.getDouble("[2].volume"), 0.01);
         assertEquals(10.0, path.getDouble("[3].volume"), 0.01);
+        // Check whether a timestamp is present in the output.
+        assertTrue(path.getInt("[0].timestamp") > 0);
     }
 
     /**
