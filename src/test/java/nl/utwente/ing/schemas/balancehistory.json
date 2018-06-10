@@ -1,0 +1,29 @@
+{
+  "title": "Balance history",
+  "type": "array",
+  "datapoints": {
+    "title": "Datapoint",
+    "type": "object",
+    "properties": {
+      "open": {
+        "type": "integer"
+      },
+      "close": {
+        "type": "integer"
+      },
+      "high": {
+        "type": "integer"
+      },
+      "low": {
+        "type": "integer"
+      },
+      "volume": {
+        "type": "integer"
+      },
+      "timestamp": {
+        "type": "integer"
+      }
+    },
+    "required": ["open", "close", "high", "low", "volume", "timestamp"]
+  }
+}
