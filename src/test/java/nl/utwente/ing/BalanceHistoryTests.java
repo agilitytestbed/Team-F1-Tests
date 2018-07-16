@@ -261,18 +261,8 @@ public class BalanceHistoryTests {
      * @param type the type of the Transaction, either withdrawal or deposit
      */
     private static void createTransaction(String sessionId, String date, int amount, String type) {
-        int transactionId = given()
-                .header("X-session-ID", sessionId)
-                .body(String.format(TEST_TRANSACTION_FORMAT, date, amount, type))
-                .post("api/v1/transactions")
-                .then()
-                .assertThat()
-                .statusCode(201)
-                .extract()
-                .response()
-                .getBody()
-                .jsonPath()
-                .getInt("id");
+        int transactionId = Util.createTestTransaction(date, amount, "NL39RABO0300065264",
+                type, "University of Twente", sessionId);
         testTransactions.add(new TestTransaction(sessionId, transactionId));
     }
 
