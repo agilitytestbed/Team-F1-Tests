@@ -44,13 +44,6 @@ import static org.junit.Assert.assertTrue;
 public class BalanceHistoryTests {
 
     private static final Path BALANCE_HISTORY_SCHEMA_PATH = Paths.get("src/test/java/nl/utwente/ing/schemas/balancehistory.json");
-    private static final String TEST_TRANSACTION_FORMAT = "{" +
-            "\"date\": \"%s\", " +
-            "\"amount\": %d, " +
-            "\"externalIBAN\": \"NL39RABO0300065264\", " +
-            "\"type\": \"%s\", " +
-            "\"description\":\"University of Twente\"" +
-            "}";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private static String sessionId;
