@@ -196,6 +196,10 @@ public class SavingGoalsTests {
      */
     @Test
     public void savingGoalFunctionalityTest() {
+        // Transactions made by other tests influence the system time, so they have to be removed in order to be
+        // predictable.
+        deleteTestData();
+
         // Deposit €1200 on May the 28th.
         testTransactions.add(Util.createTestTransaction("2018-05-28T00:00:00.000Z", 1200,
                 "NL39RABO0300065264", "deposit", "test", sessionId));
@@ -205,7 +209,7 @@ public class SavingGoalsTests {
         createSavingGoal(10000, 500, 1000, sessionId);
         // Withdraw €100 on June the 2nd.
         testTransactions.add(Util.createTestTransaction("2018-06-02T00:00:00.000Z", 100,
-                "NL39RABO0300065264", "withdraw", "test", sessionId));
+                "NL39RABO0300065264", "withdrawal", "test", sessionId));
         // Check balance, should now be €850 after processing saving goals.
         JsonPath path = given()
                 .header("X-session-ID", sessionId)
@@ -218,6 +222,43 @@ public class SavingGoalsTests {
                 .getBody()
                 .jsonPath();
         assertEquals(850, path.getDouble("[0].close"), 0.01);
+    }
+
+    /**
+     * Tests whether the functionality of a saving goal works as described by creating goals and transactions.
+     * A savings goal is fully completed in this test.
+     * Checks whether the final balance is correct.
+     */
+    @Test
+    public void savingGoalCompletedFunctionalityTest() {
+        // Transactions made by other tests influence the system time, so they have to be removed in order to be
+        // predictable.
+        deleteTestData();
+
+        // Deposit €1200 on August the 28th.
+        testTransactions.add(Util.createTestTransaction("2018-08-28T00:00:00.000Z", 1200,
+                "NL39RABO0300065264", "deposit", "test", sessionId));
+        // Add saving goal for €250 each month and a goal of €250.
+        // This goal will be completed after one month.
+        createSavingGoal(250, 250, 0, sessionId);
+        // Withdraw €100 on September the 2nd.
+        testTransactions.add(Util.createTestTransaction("2018-09-02T00:00:00.000Z", 100,
+                "NL39RABO0300065264", "withdrawal", "test", sessionId));
+        // Withdraw another €100 on October the 3rd.
+        testTransactions.add(Util.createTestTransaction("2018-10-03T00:00:00.000Z", 100,
+                "NL39RABO0300065264", "withdrawal", "test", sessionId));
+        // The savings goal should only have been applied once, check whether balance confirms this.
+        JsonPath path = given()
+                .header("X-session-ID", sessionId)
+                .get("api/v1/balance/history?intervals=1")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .extract()
+                .response()
+                .getBody()
+                .jsonPath();
+        assertEquals(750, path.getDouble("[0].close"), 0.01);
     }
 
     /**

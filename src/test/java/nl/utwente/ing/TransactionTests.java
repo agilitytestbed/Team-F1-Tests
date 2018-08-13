@@ -81,22 +81,12 @@ public class TransactionTests {
     private static final int TEST_OFFSET_NUMBER = 1;
 
     /**
-     * Makes sure all tests share the same session ID by setting sessionId if it does not exist yet.
-     */
-    @Before
-    public void getTestSession() {
-        if (sessionId == null) {
-            sessionId = Util.getSessionID();
-        }
-    }
-
-    /**
-     * Makes sure all tests share the same category by setting categoryId if it does not exist yet.
+     * Makes sure all tests share the same category and session.
      */
     @Before
     public void getTestCategory() {
         if (sessionId == null) {
-            getTestSession();
+            sessionId = Util.getSessionID();
         }
 
         if (testCategoryId == null) {
@@ -112,7 +102,7 @@ public class TransactionTests {
     @After
     public void deleteTestTransactions() {
         if (sessionId == null) {
-            getTestSession();
+            sessionId = Util.getSessionID();
         }
 
         // No test transaction has been made yet, thus no need to delete anything.

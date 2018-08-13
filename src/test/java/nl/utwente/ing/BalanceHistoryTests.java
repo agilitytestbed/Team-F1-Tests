@@ -150,11 +150,11 @@ public class BalanceHistoryTests {
                 .getBody()
                 .jsonPath();
 
-        assertEquals(5.00, path.getDouble("[0].open"), 0.01);
-        assertEquals(7.00, path.getDouble("[0].close"), 0.01);
-        assertEquals(8.00, path.getDouble("[0].high"), 0.01);
-        assertEquals(5.00, path.getDouble("[0].low"), 0.01);
-        assertEquals(4.00, path.getDouble("[0].volume"), 0.01);
+        assertEquals(800, path.getDouble("[0].open"), 0.01);
+        assertEquals(700, path.getDouble("[0].close"), 0.01);
+        assertEquals(800, path.getDouble("[0].high"), 0.01);
+        assertEquals(700, path.getDouble("[0].low"), 0.01);
+        assertEquals(400, path.getDouble("[0].volume"), 0.01);
         // Check whether a timestamp is present in the output.
         assertTrue(path.getInt("[0].timestamp") > 0);
     }
@@ -193,12 +193,12 @@ public class BalanceHistoryTests {
                 .jsonPath();
 
         // Pick some arbitrary elements from the result and make sure they are correct.
-        assertEquals(6.00, path.getDouble("[0].open"), 0.01);
-        assertEquals(3.00, path.getDouble("[0].close"), 0.01);
-        assertEquals(6.00, path.getDouble("[1].high"), 0.01);
-        assertEquals(2.00, path.getDouble("[1].low"), 0.01);
-        assertEquals(2.00, path.getDouble("[2].volume"), 0.01);
-        assertEquals(1.00, path.getDouble("[3].volume"), 0.01);
+        assertEquals(600, path.getDouble("[0].open"), 0.01);
+        assertEquals(300, path.getDouble("[0].close"), 0.01);
+        assertEquals(600, path.getDouble("[1].high"), 0.01);
+        assertEquals(200, path.getDouble("[1].low"), 0.01);
+        assertEquals(100, path.getDouble("[2].volume"), 0.01);
+        assertEquals(500, path.getDouble("[3].volume"), 0.01);
         // Check whether a timestamp is present in the output.
         assertTrue(path.getInt("[0].timestamp") > 0);
     }
@@ -235,12 +235,12 @@ public class BalanceHistoryTests {
                 .jsonPath();
 
         // Pick some arbitrary elements from the result and make sure they are correct.
-        assertEquals(9.00, path.getDouble("[0].open"), 0.01);
-        assertEquals(10.0, path.getDouble("[0].close"), 0.01);
-        assertEquals(10.0, path.getDouble("[1].high"), 0.01);
-        assertEquals(9.0, path.getDouble("[1].low"), 0.01);
-        assertEquals(0.0, path.getDouble("[2].volume"), 0.01);
-        assertEquals(10.0, path.getDouble("[3].volume"), 0.01);
+        assertEquals(600, path.getDouble("[0].open"), 0.01);
+        assertEquals(1000, path.getDouble("[0].close"), 0.01);
+        assertEquals(900, path.getDouble("[1].high"), 0.01);
+        assertEquals(600, path.getDouble("[1].low"), 0.01);
+        assertEquals(0, path.getDouble("[2].volume"), 0.01);
+        assertEquals(1000, path.getDouble("[3].volume"), 0.01);
         // Check whether a timestamp is present in the output.
         assertTrue(path.getInt("[0].timestamp") > 0);
     }
