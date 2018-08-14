@@ -1,0 +1,25 @@
+{
+  "title": "SavingGoal",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "number"
+    },
+    "savePerMonth": {
+      "type": "number"
+    },
+    "minBalanceRequired": {
+      "type": "number"
+    },
+    "balance": {
+      "type": "number"
+    }
+  },
+  "required": ["id", "name", "goal", "savePerMonth", "minBalanceRequired", "balance"]
+}

@@ -53,6 +53,28 @@ public class Util {
                 .getString("id");
     }
 
+    public static int createTestTransaction(String date, int amount, String externalIBAN, String type,
+                                            String description, String sessionId) {
+        return given()
+                .header("X-session-ID", sessionId)
+                .body(String.format("{" +
+                        "\"date\": \"%s\", " +
+                        "\"amount\": %d, " +
+                        "\"externalIBAN\": \"%s\", " +
+                        "\"type\": \"%s\", " +
+                        "\"description\":\"%s\"" +
+                        "}", date, amount, externalIBAN, type, description))
+                .post("api/v1/transactions")
+                .then()
+                .assertThat()
+                .statusCode(201)
+                .extract()
+                .response()
+                .getBody()
+                .jsonPath()
+                .getInt("id");
+    }
+
     public static int createTestCategory(String name, String sessionId) {
         return given()
                 .header("X-session-ID", sessionId)
