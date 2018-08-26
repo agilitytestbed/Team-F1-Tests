@@ -30,7 +30,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({SessionTests.class, CategoryTests.class, TransactionTests.class, CategoryRuleTests.class,
-        BalanceHistoryTests.class, SavingGoalsTests.class})
+        BalanceHistoryTests.class, SavingGoalsTests.class, PaymentRequestsTests.class})
 public class TestSuite {
 
     @AfterClass
