@@ -30,10 +30,20 @@ import java.nio.file.Paths;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.post;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class Util {
 
     private static final Path SESSION_SCHEMA_PATH = Paths.get("src/test/java/nl/utwente/ing/schemas/session.json");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final String PAYMENT_REQUEST_FORMAT =
+            "{" +
+                    "\"description\": \"%s\"," +
+                    "\"due_date\": \"%s\"," +
+                    "\"amount\": %s," +
+                    "\"number_of_requests\": %d" +
+                    "}";
 
     /**
      * Accesses the session API endpoint to generate a new session ID.
@@ -83,6 +93,26 @@ public class Util {
                 .then()
                 .assertThat()
                 .body(matchesJsonSchema(CategoryTests.CATEGORY_SCHEMA_PATH.toAbsolutePath().toUri()))
+                .statusCode(201)
+                .extract()
+                .response()
+                .getBody()
+                .jsonPath()
+                .getInt("id");
+    }
+
+    public static int createTestPaymentRequest(String description, Calendar dueDate, String amount, int requestCount,
+                                               String sessionId) {
+        return given()
+                .header("X-session-ID", sessionId)
+                .body(String.format(PAYMENT_REQUEST_FORMAT,
+                        description,
+                        DATE_FORMAT.format(dueDate.getTime()),
+                        amount,
+                        requestCount))
+                .post("api/v1/paymentRequests")
+                .then()
+                .assertThat()
                 .statusCode(201)
                 .extract()
                 .response()

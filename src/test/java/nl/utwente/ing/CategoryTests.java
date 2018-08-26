@@ -141,7 +141,7 @@ public class CategoryTests {
     /**
      * Performs a POST request on the categories endpoint.
      *
-     * This test uses an invalid session ID and a body formatted according to the given specification for a Transaction.
+     * This test uses an invalid session ID and a body formatted according to the given specification for a Category.
      * This test will check whether the resulting status code is 401 Unauthorized.
      */
     @Test
