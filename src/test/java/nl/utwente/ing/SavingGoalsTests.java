@@ -43,7 +43,7 @@ public class SavingGoalsTests {
 
     private static final Path SAVING_GOAL_SCHEMA_PATH = Paths.get("src/test/java/nl/utwente/ing/schemas/savinggoals/savinggoal.json");
     private static final Path SAVING_GOAL_LIST_SCHEMA_PATH = Paths.get("src/test/java/nl/utwente/ing/schemas/savinggoals/savinggoal-list.json");
-    private static final String TEST_SAVING_GOAL_FORMAT = "{" +
+    static final String TEST_SAVING_GOAL_FORMAT = "{" +
             "\"name\":\"Test Goal\"," +
             "\"goal\": %d," +
             "\"savePerMonth\": %d," +

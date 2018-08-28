@@ -1,0 +1,32 @@
+{
+  "title": "Messages",
+  "type": "array",
+  "messages": {
+    "title": "Message",
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "The unique identifier for the message",
+        "type": "integer"
+      },
+      "message": {
+        "description": "The user friendly text for this message",
+        "type": "string"
+      },
+      "date": {
+        "description": "The date on which this message occurred",
+        "type": "string"
+      },
+      "read": {
+        "description": "Marks whether this message has been read by the user or not",
+        "type": "boolean"
+      },
+      "type": {
+        "description": "The type of this message (either info or warning)",
+        "type": "string",
+        "enum": ["info", "warning"]
+      }
+    },
+    "required": ["id", "message", "date", "read", "type"]
+  }
+}

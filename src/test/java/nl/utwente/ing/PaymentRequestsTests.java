@@ -75,7 +75,6 @@ public class PaymentRequestsTests {
         }
     }
 
-
     /**
      * Performs a GET request on the payment requests endpoint.
      *
